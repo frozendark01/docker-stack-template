@@ -1,0 +1,134 @@
+---
+
+services:
+  airsonic-advanced:
+    image: lscr.io/linuxserver/airsonic-advanced
+    container_name: airsonic-advanced
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - CONTEXT_PATH=<URL_BASE> #optional
+      - JAVA_OPTS=<options> #optional
+    volumes:
+      - </path/to/config>:/config
+      - </path/to/music>:/music
+      - </path/to/playlists>:/playlists
+      - </path/to/podcasts>:/podcasts
+      - </path/to/other media>:/media #optional
+    ports:
+      - 4040:4040
+    devices:
+      - /dev/snd:/dev/snd #optional
+    restart: unless-stopped
+
+  code-server:
+    image: lscr.io/linuxserver/code-server
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - PASSWORD=password #optional
+      - HASHED_PASSWORD= #optional
+      - SUDO_PASSWORD=password #optional
+      - SUDO_PASSWORD_HASH= #optional
+      - PROXY_DOMAIN=code-server.my.domain #optional
+      - DEFAULT_WORKSPACE=/config/workspace #optional
+    volumes:
+      - /path/to/appdata/config:/config
+    ports:
+      - 8443:8443
+    restart: unless-stopped
+
+  heimdall:
+      image: lscr.io/linuxserver/heimdall
+      container_name: heimdall
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/London
+      volumes:
+        - </path/to/appdata/config>:/config
+      ports:
+        - 80:80
+        - 443:443
+      restart: unless-stopped
+
+  libreoffice:
+      image: lscr.io/linuxserver/libreoffice
+      container_name: libreoffice
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/London
+      volumes:
+        - /path/to/config:/config
+      ports:
+        - 3000:3000
+      restart: unless-stopped
+
+   nextcloud:
+      image: lscr.io/linuxserver/nextcloud
+      container_name: nextcloud
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/London
+      volumes:
+        - /path/to/appdata:/config
+        - /path/to/data:/data
+      ports:
+        - 443:443
+      restart: unless-stopped
+
+   plex:
+       image: lscr.io/linuxserver/plex
+       container_name: plex
+       network_mode: host
+       environment:
+         - PUID=1000
+         - PGID=1000
+         - VERSION=docker
+         - PLEX_CLAIM= #optional
+       volumes:
+         - /path/to/library:/config
+         - /path/to/tvseries:/tv
+         - /path/to/movies:/movies
+       restart: unless-stopped
+
+    webtop:
+       image: lscr.io/linuxserver/webtop
+       container_name: webtop
+       security_opt:
+          - seccomp:unconfined #optional
+         environment:
+           - PUID=1000
+           - PGID=1000
+           - TZ=Europe/London
+           - SUBFOLDER=/ #optional
+           - KEYBOARD=en-us-qwerty #optional
+         volumes:
+           - /path/to/data:/config
+           - /var/run/docker.sock:/var/run/docker.sock #optional
+         ports:
+           - 3000:3000
+         shm_size: "1gb" #optional
+         restart: unless-stopped
+
+    qbittorrent:
+        image: lscr.io/linuxserver/qbittorrent
+        container_name: qbittorrent
+        environment:
+          - PUID=1000
+          - PGID=1000
+          - TZ=Europe/London
+          - WEBUI_PORT=8080
+        volumes:
+          - /path/to/appdata/config:/config
+          - /path/to/downloads:/downloads
+        ports:
+          - 6881:6881
+          - 6881:6881/udp
+          - 8080:8080
+        restart: unless-stopped
